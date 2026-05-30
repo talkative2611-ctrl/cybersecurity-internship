@@ -1,3 +1,4 @@
+const validator = require('validator');
 const ProfileDAO = require("../data/profile-dao").ProfileDAO;
 const ESAPI = require("node-esapi");
 const {
@@ -61,7 +62,8 @@ function ProfileHandler(db) {
         const testComplyWithRequirements = regexPattern.test(bankRouting);
         // if the regex test fails we do not allow saving
         if (testComplyWithRequirements !== true) {
-            const firstNameSafeString = firstName;
+            if (!validator.isAlpha(firstName.replace(/\s/g, ""))) return next(new Error("Invalid first name"));
+                const firstNameSafeString = validator.escape(firstName);
             return res.render("profile", {
                 updateError: "Bank Routing number does not comply with requirements for format specified",
                 firstNameSafeString,
@@ -93,7 +95,8 @@ function ProfileHandler(db) {
                 if (err) return next(err);
 
                 // WARN: Applying any sting specific methods here w/o checking type of inputs could lead to DoS by HPP
-                //firstName = firstName.trim();
+                if (!validator.isAlpha(firstName.replace(/\s/g, ""))) return next(new Error("Invalid first name"));
+            firstName = validator.escape(firstName.trim());
                 user.updateSuccess = true;
                 user.userId = userId;
 

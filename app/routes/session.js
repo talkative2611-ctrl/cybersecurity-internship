@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const UserDAO = require("../data/user-dao").UserDAO;
 const AllocationsDAO = require("../data/allocations-dao").AllocationsDAO;
 const {
