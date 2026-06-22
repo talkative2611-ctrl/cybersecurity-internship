@@ -12,6 +12,13 @@ const MongoClient = require("mongodb").MongoClient; // Driver for connecting to 
 const http = require("http");
 const marked = require("marked");
 const logger = require("./app/logger");
+const rateLimit = require("express-rate-limit");
+const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100, message: "Too many requests, please try again later." });
+app.use(limiter);
+const cors = require("cors");
+app.use(cors({ origin: "http://127.0.0.1:4000", methods: ["GET","POST"] }));
+app.use(helmet.contentSecurityPolicy({ directives: { defaultSrc: ["'self'"], scriptSrc: ["'self'"], styleSrc: ["'self'", "'unsafe-inline'"] } }));
+app.use(helmet.hsts({ maxAge: 31536000, includeSubDomains: true }));
 //const nosniff = require('dont-sniff-mimetype');
 const app = express(); // Web framework to handle routing requests
 const routes = require("./app/routes");
